@@ -1,76 +1,29 @@
 
-module.exports =  function numberToEnglish( n ) {
+module.exports =  function numberToEnglish(n) {
         
-        var string = n.toString(), units, tens, scales, start, end, chunks, chunksLen, chunk, ints, i, word, words, and = 'and';
+    units = [ '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' ];
+        
+    tens = [ '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety' ];
 
-        string = string.replace(/[, ]/g,"");
-
-        if( parseInt( string ) === 0 ) {
-            return 'zero';
-        }
+	if (n === 0) return "zero";
+	if (n < 20) return units[n];
+	
+	if (n < 100)
+		return (
+			tens[parseInt(n / 10)] +
+            (n % 10 !== 0 ? " " : "") +
+            units[n % 10]
+        );
+		
+    let nString = n.toString();
+	
+	if (nString[1] === "0" && nString[2] === "0")
+		return units[nString[0]] + " hundred";
+    else
+        return (
+            units[nString[0]] +
+            " hundred " +
+            numberToEnglish(parseInt(nString[1] + nString[2]))
+        );
         
-        /* Array of units as words */
-        units = [ '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' ];
-        
-        /* Array of tens as words */
-        tens = [ '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety' ];
-        
-        /* Array of scales as words */
-        scales = [ '', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quatttuor-decillion', 'quindecillion', 'sexdecillion', 'septen-decillion', 'octodecillion', 'novemdecillion', 'vigintillion', 'centillion' ];
-        
-        start = string.length;
-        chunks = [];
-        while( start > 0 ) {
-            end = start;
-            chunks.push( string.slice( ( start = Math.max( 0, start - 3 ) ), end ) );
-        }
-        
-        chunksLen = chunks.length;
-        if( chunksLen > scales.length ) {
-            return '';
-        }
-        
-        words = [];
-        for( i = 0; i < chunksLen; i++ ) {
-            
-            chunk = parseInt( chunks[i] );
-            
-            if( chunk ) {
-                
-                ints = chunks[i].split( '' ).reverse().map( parseFloat );
-            
-                if( ints[1] === 1 ) {
-                    ints[0] += 10;
-                }
-                
-                if( ( word = scales[i] ) ) {
-                    words.push( word );
-                }
-                
-                if( ( word = units[ ints[0] ] ) ) {
-                    words.push( word );
-                }
-                
-                if( ( word = tens[ ints[1] ] ) ) {
-                    words.push( word );
-                }
-                
-                if( ints[0] || ints[1] ) {
-                    
-                    if( ints[2] || ! i && chunksLen ) {
-                        words.push();
-                    }
-                
-                }
-                
-                if( ( word = units[ ints[2] ] ) ) {
-                    words.push( word + ' hundred' );
-                }
-                
-            }
-            
-        }
-        
-        return words.reverse().join( ' ' );
 }
-        
